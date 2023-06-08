@@ -1,8 +1,8 @@
-export { create } from "./create.controller.js";
-export { createMany } from "./create-many.controller.js";
-export { retrieve } from "./retrieve.controller.js";
-export { retrieveAll } from "./retrieve-all.controller.js";
-export { update } from "./update.controller.js";
-export { updateMany } from "./update-many.controller.js";
-export { destroy } from "./destroy.controller.js";
-export { destroyMany } from "./destroy-many.controller.js";
+export { createController } from "./create.controller.js";
+export { createManyController } from "./create-many.controller.js";
+export { retrieveController } from "./retrieve.controller.js";
+export { retrieveAllController } from "./retrieve-all.controller.js";
+export { updateController } from "./update.controller.js";
+export { updateManyController } from "./update-many.controller.js";
+export { deleteController } from "./delete.controller.js";
+export { deleteManyController } from "./delete-many.controller.js";

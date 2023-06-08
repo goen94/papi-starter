@@ -1,28 +1,18 @@
-FROM node:18
-
-# logged in as user "node"
+FROM node:18 as builder
+ENV NODE_ENV=development
 USER node
-
-# setup node environment
-ENV NODE_ENV=production
-
-# setup working directory
 WORKDIR /home/node/app
-
-# copy package.json to working directory
 COPY --chown=node:node package.json ./
-
-# install npm dependencies optimized for production
-RUN npm install --omit=dev
-
-# copy current directory to the container working directory
+RUN  npm install
 COPY --chown=node:node . .
-
-# build
 RUN npm run build
 
-# expose
+FROM node:18 as runner
+ENV NODE_ENV=production
+USER node
+WORKDIR /home/node/app
+COPY --chown=node:node package.json ./
+RUN npm install --only=production
+COPY --chown=node:node --from=builder /home/node/app .
 EXPOSE 3000
-
-# run startup command
 CMD ["node", "build/index.js"]

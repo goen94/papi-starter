@@ -8,4 +8,6 @@ module.exports = {
     "^@src/(.*)\\.js$": "<rootDir>/src/$1",
     "^(\\.{1,2}/.*)\\.js$": "$1",
   },
+  globalSetup: "<rootDir>/src/test/setup.ts",
+  globalTeardown: "<rootDir>/src/test/teardown.ts",
 };

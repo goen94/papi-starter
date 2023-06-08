@@ -1,5 +1,7 @@
 import { config } from "dotenv";
+import { setupEnvironment } from "./environment.js";
 
+setupEnvironment(process.env.NODE_ENV as string);
 config();
 
 export interface IAppConfig {
@@ -7,7 +9,7 @@ export interface IAppConfig {
 }
 
 const appConfig: IAppConfig = {
-  name: process.env.APP_NAME ?? "",
+  name: `${process.env.APP_NAME}`,
 };
 
 export default appConfig;
