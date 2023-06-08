@@ -385,6 +385,7 @@ export default class MongoDbConnection implements IDatabaseAdapter {
   }
 
   public async aggregate(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     pipeline: any[],
     query: AggregateQueryInterface,
     options?: AggregateOptionsInterface
