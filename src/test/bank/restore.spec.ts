@@ -1,10 +1,13 @@
 import request from "supertest";
+import setup from "../setup";
+import teardown from "../teardown";
 import { bankData } from "./constant";
 import { createApp } from "@src/app.js";
 
 describe("restore bank", () => {
   let _id = "";
   beforeEach(async () => {
+    await setup();
     const app = await createApp();
     const authResponse = await request(app).post("/v1/auth/signin").send({
       username: "admin",
@@ -13,6 +16,9 @@ describe("restore bank", () => {
     const accessToken = authResponse.body.accessToken;
     const response = await request(app).post("/v1/banks").send(bankData).set("Authorization", `Bearer ${accessToken}`);
     _id = response.body._id;
+  });
+  afterEach(async () => {
+    await teardown();
   });
   it("should check user is authorized", async () => {
     const app = await createApp();

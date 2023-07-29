@@ -1,4 +1,6 @@
 import request from "supertest";
+import setup from "../setup";
+import teardown from "../teardown";
 import { bankData } from "./constant";
 import { createApp } from "@src/app.js";
 
@@ -6,6 +8,7 @@ describe("request delete bank", () => {
   let _id = "";
   let _approverId = "";
   beforeEach(async () => {
+    await setup();
     const app = await createApp();
     const authResponse = await request(app).post("/v1/auth/signin").send({
       username: "admin",
@@ -20,6 +23,9 @@ describe("request delete bank", () => {
       password: "approver2023",
     });
     _approverId = authApproverResponse.body._id;
+  });
+  afterEach(async () => {
+    await teardown();
   });
   it("should check user is authorized", async () => {
     const app = await createApp();
@@ -65,6 +71,30 @@ describe("request delete bank", () => {
     );
     expect(response.body.errors.approvalTo).toBe(["approvalTo is required"]);
     expect(response.body.errors.reasonDelete).toBe(["reasonDelete is required"]);
+  });
+  it("should check if bank exist", async () => {
+    const app = await createApp();
+    const authResponse = await request(app).post("/v1/auth/signin").send({
+      username: "admin",
+      password: "admin2023",
+    });
+    const accessToken = authResponse.body.accessToken;
+
+    const requestDelete = {
+      approvalTo: _approverId,
+      reasonDelete: "this is reason",
+    };
+    const response = await request(app)
+      .post("/v1/banks/randomid/request-delete")
+      .send(requestDelete)
+      .set("Authorization", `Bearer ${accessToken}`);
+
+    expect(response.statusCode).toEqual(404);
+    expect(response.body.code).toBe(404);
+    expect(response.body.status).toBe("Not Found");
+    expect(response.body.message).toBe(
+      "The URL is not recognized or endpoint is valid but the resource itself does not exist."
+    );
   });
   it("should request delete data", async () => {
     const app = await createApp();

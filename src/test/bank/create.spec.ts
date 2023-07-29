@@ -1,9 +1,17 @@
 import request from "supertest";
+import setup from "../setup";
+import teardown from "../teardown";
 import { bankData } from "./constant";
 import { createApp } from "@src/app.js";
 import { db } from "@src/database/database.js";
 
 describe("create bank", () => {
+  beforeEach(async () => {
+    await setup();
+  });
+  afterEach(async () => {
+    await teardown();
+  });
   it("should check user is authorized", async () => {
     const app = await createApp();
     const response = await request(app).post("/v1/banks").send({});

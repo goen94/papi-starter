@@ -1,3 +1,6 @@
+import { db } from "@src/database/database";
+
 export default async function teardown() {
-  console.info("teardown test");
+  await db.collection("roles").deleteAll();
+  await db.collection("users").deleteAll();
 }

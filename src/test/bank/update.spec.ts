@@ -1,4 +1,6 @@
 import request from "supertest";
+import setup from "../setup";
+import teardown from "../teardown";
 import { bankData } from "./constant";
 import { createApp } from "@src/app.js";
 import { db } from "@src/database/database.js";
@@ -11,6 +13,7 @@ const updateData = {
 describe("update bank", () => {
   let _id = "";
   beforeEach(async () => {
+    await setup();
     const app = await createApp();
     const authResponse = await request(app).post("/v1/auth/signin").send({
       username: "admin",
@@ -19,6 +22,9 @@ describe("update bank", () => {
     const accessToken = authResponse.body.accessToken;
     const response = await request(app).post("/v1/banks").send(bankData).set("Authorization", `Bearer ${accessToken}`);
     _id = response.body._id;
+  });
+  afterEach(async () => {
+    await teardown();
   });
   it("should check user is authorized", async () => {
     const app = await createApp();
@@ -114,6 +120,26 @@ describe("update bank", () => {
     );
     expect(response.body.errors.code).toBe(["code is exists"]);
     expect(response.body.errors.name).toBe(["name is exists"]);
+  });
+  it("should check if bank exist", async () => {
+    const app = await createApp();
+    const authResponse = await request(app).post("/v1/auth/signin").send({
+      username: "admin",
+      password: "admin2023",
+    });
+    const accessToken = authResponse.body.accessToken;
+
+    const response = await request(app)
+      .patch("/v1/banks/randomid")
+      .send(updateData)
+      .set("Authorization", `Bearer ${accessToken}`);
+
+    expect(response.statusCode).toEqual(404);
+    expect(response.body.code).toBe(404);
+    expect(response.body.status).toBe("Not Found");
+    expect(response.body.message).toBe(
+      "The URL is not recognized or endpoint is valid but the resource itself does not exist."
+    );
   });
   it("should save to database", async () => {
     const app = await createApp();
